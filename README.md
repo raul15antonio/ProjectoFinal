@@ -50,9 +50,7 @@ Computes the Fibonacci sequence using both iterative and recursive approaches, p
 
 **6. Expression Calculator (Extra)**
 Evaluates math expressions typed in the input box or passed directly through the URL using the `?expr=` parameter.
-```
-```
-Supports `sqrt()`, `abs()`, `pi`, `e`, and exponents (`^`).
+
 
 **7. Curriculum Vitae (CV)**
 Reads data from `cv.json` and renders a full resume on the page using the `printCVHTML()` function. Each entry has a `"show": true/false` flag to control visibility. Includes a **Download PDF** button powered by jsPDF that generates a styled PDF version of the resume.
