@@ -104,7 +104,6 @@ Computer Science Student — UPRM, 2023–2027
 
 ## References & Credits
 
-- Tau Prolog — Prolog interpreter for JavaScript: https://tau-prolog.org/
 - jsPDF — PDF generation library: https://github.com/parallax/jsPDF
 - Family tree knowledge base — classic Prolog introductory example from standard logic programming textbooks
 - Bubble Sort algorithm — standard computer science algorithm (public domain)
