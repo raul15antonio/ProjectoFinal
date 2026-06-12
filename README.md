@@ -59,14 +59,6 @@ Reads data from `cv.json` and renders a full resume on the page using the `print
 
 ---
 
-## File Structure
-
-```
-portfolio/
-├── index.html       # Main page — all 7 programs
-└── cv.json          # CV data (name, education, skills, etc.)
-```
-
 ---
 
 ## How to Run Locally
