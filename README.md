@@ -98,7 +98,7 @@ Then open `http://localhost:8000` in your browser.
 **Raul Antonio Vivaldi Santana**
 Computer Science Student — UPRM, 2023–2027
 📧 Raulvivaldi2005@gmail.com
-🐙 [github.com/raul15antonio](https://github.com/raul15antonio)
+ [github.com/raul15antonio](https://github.com/raul15antonio)
 
 ---
 
