@@ -49,9 +49,8 @@ Demonstrates OOP with classes, inheritance, and encapsulation. `BankAccount` is 
 Computes the Fibonacci sequence using both iterative and recursive approaches, plots the values on a line chart, and measures the execution time of each method for comparison.
 
 **6. Expression Calculator (Extra)**
-Evaluates math expressions typed in the input box or passed directly through the URL using the `?expr=` parameter. For example:
+Evaluates math expressions typed in the input box or passed directly through the URL using the `?expr=` parameter.
 ```
-https://raul15antonio.github.io/portfolio?expr=2+3*4
 ```
 Supports `sqrt()`, `abs()`, `pi`, `e`, and exponents (`^`).
 
