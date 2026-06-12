@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raul Vivaldi — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://tau-prolog.org/modules/tau-prolog.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg2: #111827;
+      --bg3: #1a2236;
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --accent3: #10b981;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: #1e293b;
+      --font-display: 'Space Mono', monospace;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,14,26,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px;
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1rem; color: var(--accent2); }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 2rem; position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% 40%, rgba(124,58,237,.18), transparent);
+      pointer-events: none;
+    }
+    .hero-tag { font-family: var(--font-display); font-size: .75rem; color: var(--accent2); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 1rem; }
+    h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1.1; margin-bottom: 1rem; }
+    h1 span { color: var(--accent); }
+    .hero-sub { font-size: 1.15rem; color: var(--muted); max-width: 560px; margin-bottom: 2.5rem; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn { padding: .7rem 1.6rem; border-radius: 6px; font-size: .9rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all .2s; border: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #6d28d9; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); }
+    .scroll-hint { position: absolute; bottom: 2rem; font-size: .75rem; color: var(--muted); letter-spacing: .1em; animation: bounce 2s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+    /* SECTIONS */
+    section { padding: 5rem 1.5rem; max-width: 900px; margin: 0 auto; }
+    .section-eyebrow { font-family: var(--font-display); font-size: .7rem; letter-spacing: .18em; color: var(--accent2); text-transform: uppercase; margin-bottom: .5rem; }
+    h2 { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 2.2rem); margin-bottom: 2rem; }
+    h2 span { color: var(--accent); }
+
+    /* PROGRAM CARDS */
+    .prog-grid { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
+    @media(min-width:640px){ .prog-grid { grid-template-columns: 1fr 1fr; } }
+    .prog-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .prog-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .tag { display: inline-block; padding: .2rem .6rem; border-radius: 4px; font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .75rem; }
+    .tag-imperative  { background: rgba(239,68,68,.15); color: #f87171; }
+    .tag-functional  { background: rgba(16,185,129,.15); color: #34d399; }
+    .tag-logical     { background: rgba(124,58,237,.15); color: #a78bfa; }
+    .tag-oop         { background: rgba(6,182,212,.15); color: #22d3ee; }
+    .tag-extra       { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .tag-cv          { background: rgba(236,72,153,.15); color: #f472b6; }
+    .prog-card h3 { font-size: 1.05rem; margin-bottom: .4rem; }
+    .prog-card p { font-size: .85rem; color: var(--muted); margin-bottom: .5rem; }
+    .prog-card code { font-family: var(--font-display); font-size: .75rem; color: var(--accent2); }
+    .prog-lang { font-family: var(--font-display); font-size: .7rem; color: var(--muted); margin-top: .5rem; display: block; }
+    .run-btn { margin-top: .75rem; width: 100%; padding: .55rem; background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 6px; cursor: pointer; font-family: var(--font-body); font-size: .85rem; transition: all .2s; }
+    .run-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+    /* SANDBOX */
+    .sandbox { display: none; background: var(--bg2); border: 1px solid var(--accent2); border-radius: 12px; padding: 1.5rem; margin-top: 1rem; }
+    .sandbox.open { display: block; }
+    .sandbox-title { font-family: var(--font-display); font-size: .8rem; color: var(--accent2); margin-bottom: 1rem; }
+    .io-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: .75rem; }
+    .io-row input, .io-row select {
+      flex: 1; min-width: 120px; padding: .5rem .75rem;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); border-radius: 6px; font-family: var(--font-body); font-size: .9rem;
+    }
+    .io-row input:focus, .io-row select:focus { outline: none; border-color: var(--accent2); }
+    .output-box {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 1rem; font-family: var(--font-display); font-size: .82rem;
+      white-space: pre-wrap; min-height: 60px; color: var(--accent3); line-height: 1.6;
+    }
+    .run-it { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: .55rem 1.2rem; cursor: pointer; font-size: .9rem; font-weight: 600; transition: background .2s; }
+    .run-it:hover { background: #6d28d9; }
+    canvas { border-radius: 8px; margin-top: .75rem; display: block; }
+
+    /* CV */
+    #cv-section { background: var(--bg2); border-radius: 16px; border: 1px solid var(--border); padding: 2rem; }
+    .cv-controls { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    #cv-output h2 { font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin: 1.2rem 0 .6rem; color: var(--text); }
+    #cv-output h3 { font-size: .95rem; color: var(--accent2); margin-bottom: .15rem; }
+    #cv-output p, #cv-output li { font-size: .88rem; color: var(--muted); }
+    #cv-output ul { padding-left: 1.2rem; }
+    #cv-output .cv-entry { margin-bottom: .9rem; }
+    #cv-output .cv-meta { font-family: var(--font-display); font-size: .72rem; color: var(--muted); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: .82rem; }
+    footer a { color: var(--accent2); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">&gt; raul_vivaldi</span>
+  <ul class="nav-links">
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#cv">CV</a></li>
+    <li><a href="https://github.com/raul15antonio" target="_blank">GitHub</a></li>
+  </ul>
+</nav>
+
+<div id="hero">
+  <p class="hero-tag">// Programming Paradigms</p>
+  <h1>Hi, I'm<br/><span>Raul Vivaldi</span></h1>
+  <p class="hero-sub">Computer Science Student at UPRM · Yauco, Puerto Rico. Exploring imperative, functional, logical and object-oriented paradigms — running live in the browser.</p>
+  <div class="hero-btns">
+    <a href="#programs" class="btn btn-primary">View Programs</a>
+    <a href="#cv" class="btn btn-outline">Curriculum Vitae</a>
+  </div>
+  <span class="scroll-hint">↓ scroll</span>
+</div>
+
+<section id="programs">
+  <p class="section-eyebrow">// 7 programs</p>
+  <h2>Paradigm <span>Explorer</span></h2>
+  <div class="prog-grid">
+
+    <!-- 1. IMPERATIVE — Bubble Sort -->
+    <div class="prog-card">
+      <span class="tag tag-imperative">Imperative</span>
+      <h3>Bubble Sort</h3>
+      <p>Step-by-step visualization of the Bubble Sort algorithm — mutable state, loops, and explicit variable swaps in classic imperative style.</p>
+      <span class="prog-lang">// C-style JavaScript</span>
+      <button class="run-btn" onclick="toggleSandbox('sb1')">▶ Run</button>
+      <div class="sandbox" id="sb1">
+        <p class="sandbox-title">// Bubble Sort — imperative paradigm</p>
+        <div class="io-row">
+          <input id="bs-input" type="text" placeholder="Numbers separated by commas" value="5,3,8,1,9,2,7,4" />
+        </div>
+        <div class="io-row"><button class="run-it" onclick="runBubbleSort()">Sort</button></div>
+        <canvas id="bs-canvas" width="460" height="120"></canvas>
+        <div class="output-box" id="bs-out"></div>
+      </div>
+    </div>
+
+    <!-- 2. FUNCTIONAL — Pipeline -->
+    <div class="prog-card">
+      <span class="tag tag-functional">Functional</span>
+      <h3>Functional Pipeline</h3>
+      <p>Pure functions composed into a pipeline — map, filter, and reduce chained together with no side effects and no mutation. Inspired by Haskell.</p>
+      <span class="prog-lang">// JavaScript (pure functional style)</span>
+      <button class="run-btn" onclick="toggleSandbox('sb2')">▶ Run</button>
+      <div class="sandbox" id="sb2">
+        <p class="sandbox-title">// Pipeline — functional paradigm</p>
+        <div class="io-row">
+          <input id="fp-input" type="text" value="1,2,3,4,5,6,7,8,9,10" />
+          <select id="fp-op">
+            <option value="square_even">Square of evens</option>
+            <option value="sum_odd">Sum of odds</option>
+            <option value="double_gt5">Double if &gt; 5</option>
+          </select>
+        </div>
+        <div class="io-row"><button class="run-it" onclick="runFunctional()">Run Pipeline</button></div>
+        <div class="output-box" id="fp-out"></div>
+      </div>
+    </div>
+
+    <!-- 3. LOGICAL — Tau Prolog -->
+    <div class="prog-card">
+      <span class="tag tag-logical">Logic</span>
+      <h3>Prolog Queries</h3>
+      <p>A live logic engine running in the browser via Tau Prolog. Define family facts and query relationships like grandparent, ancestor, and sibling.</p>
+      <span class="prog-lang">// Prolog (Tau Prolog)</span>
+      <button class="run-btn" onclick="toggleSandbox('sb3')">▶ Run</button>
+      <div class="sandbox" id="sb3">
+        <p class="sandbox-title">// Prolog — logic paradigm (Tau Prolog)</p>
+        <div class="io-row">
+          <select id="prolog-q">
+            <option value="parent(tom, bob)">Is tom the parent of bob?</option>
+            <option value="parent(tom, liz)">Is tom the parent of liz?</option>
+            <option value="grandparent(tom, ann)">Is tom the grandparent of ann?</option>
+            <option value="ancestor(tom, pat)">Is tom an ancestor of pat?</option>
+            <option value="sibling(bob, liz)">Are bob and liz siblings?</option>
+          </select>
+        </div>
+        <div class="io-row"><button class="run-it" onclick="runProlog()">Query</button></div>
+        <div class="output-box" id="prolog-out">Select a query and press Query...</div>
+      </div>
+    </div>
+
+    <!-- 4. OOP — Bank Simulator -->
+    <div class="prog-card">
+      <span class="tag tag-oop">Object-Oriented</span>
+      <h3>Bank Simulator</h3>
+      <p>Classes, inheritance, and encapsulation in action. Create savings or checking accounts, deposit, withdraw, and inspect state via OOP principles.</p>
+      <span class="prog-lang">// JavaScript ES6 Classes (OOP)</span>
+      <button class="run-btn" onclick="toggleSandbox('sb4')">▶ Run</button>
+      <div class="sandbox" id="sb4">
+        <p class="sandbox-title">// Bank OOP — object-oriented paradigm</p>
+        <div class="io-row">
+          <select id="bank-type"><option value="saving">Savings</option><option value="checking">Checking</option></select>
+          <input id="bank-owner" type="text" placeholder="Account holder" value="Raul" />
+          <input id="bank-amount" type="number" placeholder="Initial balance" value="500" />
+        </div>
+        <div class="io-row">
+          <button class="run-it" onclick="bankAction('create')">Create</button>
+          <button class="run-it" onclick="bankAction('deposit')">Deposit</button>
+          <button class="run-it" onclick="bankAction('withdraw')">Withdraw</button>
+          <button class="run-it" onclick="bankAction('status')">Status</button>
+        </div>
+        <div class="output-box" id="bank-out">Create an account to begin...</div>
+      </div>
+    </div>
+
+    <!-- 5. EXTRA — Fibonacci -->
+    <div class="prog-card">
+      <span class="tag tag-extra">Extra</span>
+      <h3>Fibonacci Visualizer</h3>
+      <p>Compares iterative vs recursive Fibonacci — computes the sequence, charts the values, and measures the execution time of each approach.</p>
+      <span class="prog-lang">// JavaScript</span>
+      <button class="run-btn" onclick="toggleSandbox('sb5'); runFibonacci()">▶ Run</button>
+      <div class="sandbox" id="sb5">
+        <p class="sandbox-title">// Fibonacci — iterative vs recursive</p>
+        <div class="io-row">
+          <input id="fib-n" type="number" min="1" max="30" value="15" placeholder="n (max 30)" />
+        </div>
+        <div class="io-row"><button class="run-it" onclick="runFibonacci()">Compute & Chart</button></div>
+        <canvas id="fib-canvas" width="460" height="150"></canvas>
+        <div class="output-box" id="fib-out"></div>
+      </div>
+    </div>
+
+    <!-- 6. EXTRA — Calculator with URL input -->
+    <div class="prog-card">
+      <span class="tag tag-extra">Extra · URL Input</span>
+      <h3>Expression Calculator</h3>
+      <p>Evaluates math expressions. Pass input through the URL with <code>?expr=2+3*4</code> or type it directly. Supports sqrt, abs, pi, and exponents.</p>
+      <span class="prog-lang">// JavaScript · URL params + UI I/O</span>
+      <button class="run-btn" onclick="toggleSandbox('sb6')">▶ Run</button>
+      <div class="sandbox" id="sb6">
+        <p class="sandbox-title">// Calculator — I/O via UI and URL (?expr=...)</p>
+        <div class="io-row">
+          <input id="calc-expr" type="text" placeholder="e.g. 2+3*4, sqrt(16), pi*2" value="2+3*4" />
+        </div>
+        <div class="io-row"><button class="run-it" onclick="runCalc()">Calculate</button></div>
+        <div class="output-box" id="calc-out"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CV -->
+<section id="cv">
+  <p class="section-eyebrow">// program 7</p>
+  <h2>Curriculum <span>Vitae</span></h2>
+  <div id="cv-section">
+    <div class="cv-controls">
+      <button class="run-it" onclick="renderCV()">📄 View Resume</button>
+      <button class="run-it" onclick="downloadPDF()">⬇ Download PDF</button>
+    </div>
+    <div id="cv-output"></div>
+  </div>
+</section>
+
+<footer>
+  <p>Built with HTML, CSS & JavaScript · <a href="https://github.com/raul15antonio" target="_blank">github.com/raul15antonio</a> · 2025</p>
+  <p style="margin-top:.5rem;font-size:.75rem;">References: <a href="https://tau-prolog.org/">Tau Prolog</a> · <a href="https://github.com/parallax/jsPDF">jsPDF</a></p>
+</footer>
+
+<script>
+// ── Utility ─────────────────────────────────────────────────
+function toggleSandbox(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ════════════════════════════════════════
+// PROGRAM 1 — Bubble Sort (Imperative)
+// ════════════════════════════════════════
+function runBubbleSort() {
+  const raw = document.getElementById('bs-input').value;
+  const arr = raw.split(',').map(x => parseInt(x.trim())).filter(n => !isNaN(n));
+  if (!arr.length) { document.getElementById('bs-out').textContent = 'Enter valid numbers.'; return; }
+
+  const original = [...arr];
+  const a = [...arr];
+  let swaps = 0, comparisons = 0;
+
+  for (let i = 0; i < a.length - 1; i++) {
+    for (let j = 0; j < a.length - i - 1; j++) {
+      comparisons++;
+      if (a[j] > a[j + 1]) {
+        let tmp = a[j]; a[j] = a[j+1]; a[j+1] = tmp;
+        swaps++;
+      }
+    }
+  }
+
+  drawBars('bs-canvas', a);
+  document.getElementById('bs-out').textContent =
+    `Input:        [${original.join(', ')}]\nSorted:       [${a.join(', ')}]\nSwaps:        ${swaps}\nComparisons:  ${comparisons}`;
+}
+
+function drawBars(id, data) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const max = Math.max(...data);
+  const bw = Math.floor((W - data.length) / data.length);
+  data.forEach((v, i) => {
+    const bh = Math.floor((v / max) * (H - 24));
+    const x = i * (bw + 1);
+    ctx.fillStyle = v === Math.min(...data) ? '#10b981' : '#7c3aed';
+    ctx.fillRect(x, H - bh - 20, bw, bh);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '10px Space Mono, monospace';
+    ctx.fillText(v, x + 2, H - 4);
+  });
+}
+
+// ════════════════════════════════════════
+// PROGRAM 2 — Functional Pipeline
+// ════════════════════════════════════════
+function runFunctional() {
+  const nums = document.getElementById('fp-input').value
+    .split(',').map(x => Number(x.trim())).filter(n => !isNaN(n));
+  const op = document.getElementById('fp-op').value;
+
+  const pipe  = (...fns) => x => fns.reduce((v, f) => f(v), x);
+  const map    = f => arr => arr.map(f);
+  const filter = p => arr => arr.filter(p);
+  const reduce = (f, init) => arr => arr.reduce(f, init);
+
+  let result, desc;
+  if (op === 'square_even') {
+    result = pipe(filter(x => x % 2 === 0), map(x => x * x))(nums);
+    desc = 'filter(even) → map(x²)';
+  } else if (op === 'sum_odd') {
+    result = pipe(filter(x => x % 2 !== 0), reduce((acc, x) => acc + x, 0))(nums);
+    desc = 'filter(odd) → reduce(sum)';
+  } else {
+    result = pipe(filter(x => x > 5), map(x => x * 2))(nums);
+    desc = 'filter(>5) → map(x*2)';
+  }
+
+  document.getElementById('fp-out').textContent =
+    `Input:    [${nums.join(', ')}]\nPipeline: ${desc}\nOutput:   ${Array.isArray(result) ? '['+result.join(', ')+']' : result}`;
+}
+
+// ════════════════════════════════════════
+// PROGRAM 3 — Tau Prolog (Logic)
+// ════════════════════════════════════════
+const prologProgram = `
+parent(tom, bob).
+parent(tom, liz).
+parent(bob, ann).
+parent(bob, pat).
+
+grandparent(X, Z) :- parent(X, Y), parent(Y, Z).
+ancestor(X, Y) :- parent(X, Y).
+ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
+sibling(X, Y) :- parent(P, X), parent(P, Y), X \\= Y.
+`;
+
+function runProlog() {
+  const query = document.getElementById('prolog-q').value;
+  const out   = document.getElementById('prolog-out');
+  out.textContent = 'Running query...';
+  try {
+    const session = tau.create();
+    session.consult(prologProgram, {
+      success: function() {
+        session.query(query + '.', {
+          success: function() {
+            session.answer({
+              success: function(answer) {
+                const fmt = tau.format_answer(answer);
+                out.textContent = `Query:  ${query}\nResult: ${fmt === 'true' || !fmt ? '✅ true' : fmt}`;
+              },
+              fail:  function() { out.textContent = `Query:  ${query}\nResult: ❌ false`; },
+              error: function(e) { out.textContent = `Error: ${JSON.stringify(e)}`; }
+            });
+          },
+          error: function(e) { out.textContent = `Query error: ${JSON.stringify(e)}`; }
+        });
+      },
+      error: function(e) { out.textContent = `Program error: ${JSON.stringify(e)}`; }
+    });
+  } catch(e) {
+    // Fallback if Tau Prolog CDN unavailable
+    const kb = {
+      'parent(tom, bob)': true, 'parent(tom, liz)': true,
+      'parent(bob, ann)': true, 'parent(bob, pat)': true,
+      'grandparent(tom, ann)': true, 'grandparent(tom, pat)': true,
+      'ancestor(tom, pat)': true, 'ancestor(tom, ann)': true,
+      'sibling(bob, liz)': true, 'sibling(liz, bob)': true
+    };
+    const ans = kb[query] ? '✅ true' : '❌ false';
+    out.textContent = `Query:  ${query}\nResult: ${ans}\n(Tau Prolog offline — static KB fallback)`;
+  }
+}
+
+// ════════════════════════════════════════
+// PROGRAM 4 — OOP Bank Simulator
+// ════════════════════════════════════════
+class BankAccount {
+  #balance;
+  constructor(owner, initial) {
+    this.owner = owner; this.#balance = initial;
+    this.log = [`Account created · balance $${initial}`];
+  }
+  get balance() { return this.#balance; }
+  deposit(n) {
+    if (n <= 0) throw new Error('Invalid amount');
+    this.#balance += n;
+    this.log.push(`+ Deposit  $${n}  →  balance $${this.#balance}`);
+  }
+  withdraw(n) {
+    if (n > this.#balance) throw new Error('Insufficient funds');
+    this.#balance -= n;
+    this.log.push(`- Withdraw $${n}  →  balance $${this.#balance}`);
+  }
+  status() {
+    return `Owner:   ${this.owner}\nType:    ${this.type}\nBalance: $${this.#balance}\n\nHistory:\n${this.log.join('\n')}`;
+  }
+}
+class SavingsAccount extends BankAccount {
+  constructor(o, b) { super(o, b); this.type = 'Savings (3% interest)'; }
+}
+class CheckingAccount extends BankAccount {
+  constructor(o, b) { super(o, b); this.type = 'Checking'; }
+}
+
+let acct = null;
+function bankAction(a) {
+  const out = document.getElementById('bank-out');
+  const type = document.getElementById('bank-type').value;
+  const owner = document.getElementById('bank-owner').value || 'User';
+  const amt = parseFloat(document.getElementById('bank-amount').value) || 0;
+  try {
+    if (a === 'create') {
+      acct = type === 'saving' ? new SavingsAccount(owner, amt) : new CheckingAccount(owner, amt);
+      out.textContent = `✅ Account created!\n\n${acct.status()}`;
+    } else if (!acct) {
+      out.textContent = '⚠ Create an account first.';
+    } else if (a === 'deposit')  { acct.deposit(amt);   out.textContent = `✅ Deposit done.\n\n${acct.status()}`; }
+    else if (a === 'withdraw')   { acct.withdraw(amt);  out.textContent = `✅ Withdrawal done.\n\n${acct.status()}`; }
+    else                         { out.textContent = acct.status(); }
+  } catch(e) { out.textContent = `❌ ${e.message}`; }
+}
+
+// ════════════════════════════════════════
+// PROGRAM 5 — Fibonacci Visualizer
+// ════════════════════════════════════════
+const memo = {};
+function fibR(n) { if(n<=1)return n; return memo[n]||(memo[n]=fibR(n-1)+fibR(n-2)); }
+function fibI(n) { if(n<=1)return n; let a=0,b=1; for(let i=2;i<=n;i++){let c=a+b;a=b;b=c;} return b; }
+
+function runFibonacci() {
+  const n = Math.min(parseInt(document.getElementById('fib-n').value)||15, 30);
+  const seq = Array.from({length:n}, (_,i) => fibI(i));
+
+  const t1s = performance.now(); for(let i=0;i<n;i++) fibI(i); const t1e = performance.now();
+  Object.keys(memo).forEach(k=>delete memo[k]);
+  const t2s = performance.now(); for(let i=0;i<n;i++) fibR(i); const t2e = performance.now();
+
+  // Draw line chart
+  const canvas = document.getElementById('fib-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const max = Math.max(...seq)||1;
+  const step = W/(seq.length-1);
+  ctx.beginPath(); ctx.strokeStyle='#06b6d4'; ctx.lineWidth=2;
+  seq.forEach((v,i)=>{
+    const x=i*step, y=H-20-(v/max)*(H-30);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  seq.forEach((v,i)=>{
+    const x=i*step, y=H-20-(v/max)*(H-30);
+    ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
+    ctx.fillStyle='#7c3aed'; ctx.fill();
+  });
+
+  document.getElementById('fib-out').textContent =
+    `Sequence (n=${n}): [${seq.join(', ')}]\n\nIterative time:  ${(t1e-t1s).toFixed(4)} ms\nRecursive time:  ${(t2e-t2s).toFixed(4)} ms`;
+}
+
+// ════════════════════════════════════════
+// PROGRAM 6 — Calculator (URL + UI I/O)
+// ════════════════════════════════════════
+function safeEval(expr) {
+  expr = expr.replace(/sqrt\(([^)]+)\)/g, (_,n)=>Math.sqrt(parseFloat(n)));
+  expr = expr.replace(/abs\(([^)]+)\)/g,  (_,n)=>Math.abs(parseFloat(n)));
+  expr = expr.replace(/\bpi\b/gi, Math.PI).replace(/\be\b/gi, Math.E);
+  if (!/^[\d\s\+\-\*\/\.\(\)\%\^]+$/.test(expr)) throw new Error('Unsafe expression');
+  return Function('"use strict";return('+expr.replace(/\^/g,'**')+')')();
+}
+function runCalc() {
+  const expr = document.getElementById('calc-expr').value.trim();
+  const out  = document.getElementById('calc-out');
+  try {
+    const r = safeEval(expr);
+    out.textContent = `Expression: ${expr}\nResult:     ${r}`;
+  } catch(e) { out.textContent = `Error: ${e.message}`; }
+}
+
+// ════════════════════════════════════════
+// PROGRAM 7 — Curriculum Vitae
+// ════════════════════════════════════════
+let cvData = null;
+
+async function loadCV() {
+  try {
+    const r = await fetch('cv.json');
+    cvData = await r.json();
+  } catch {
+    cvData = {"personal":{"name":"Raul Antonio Vivaldi Santana","title":"Computer Science Student","email":"Raulvivaldi2005@gmail.com","phone":"","location":"Yauco, Puerto Rico","linkedin":"","github":"github.com/raul15antonio","summary":"Estudiante apasionado por la programación, los sistemas distribuidos y el desarrollo web.","show":true},"education":[{"degree":"Bachelor of Science in Computer Science","institution":"University of Puerto Rico, Mayagüez (UPRM)","location":"Mayagüez, PR","start":"2023","end":"2027","gpa":"3.00","show":true}],"experience":[],"skills":[{"category":"Languages","items":["Python","JavaScript","C++"],"show":true},{"category":"Tools","items":["Git","GitHub","Linux","VS Code"],"show":true},{"category":"Paradigms","items":["Imperative","Functional","Logic","OOP"],"show":true}],"projects":[],"courses":[{"name":"Data Structures","grade":"","show":true},{"name":"Algorithms","grade":"","show":true},{"name":"Operating Systems","grade":"","show":true}],"languages":[{"lang":"Spanish","level":"Native","show":true},{"lang":"English","level":"Advanced","show":true}],"certifications":[{"name":"NSLS Member","issuer":"National Society of Leadership and Success","year":"2025","show":true},{"name":"NHS Member","issuer":"National Honor Society","year":"2022","show":true}],"awards":[],"interests":[{"name":"Drawing","show":true},{"name":"Gaming","show":true},{"name":"Music","show":true}]};
+  }
+}
+
+function printCVHTML(d) {
+  let h = '';
+  const p = d.personal;
+  if (p.show) {
+    h += `<div class="cv-entry">
+      <h1 style="font-size:1.5rem;font-family:var(--font-display);color:var(--text)">${p.name}</h1>
+      <p style="color:var(--accent2);margin:.2rem 0">${p.title}</p>
+      <p class="cv-meta">${[p.email, p.location, p.github].filter(Boolean).join('  ·  ')}</p>
+      <p style="margin-top:.5rem">${p.summary}</p>
+    </div>`;
+  }
+
+  const edu = d.education.filter(e=>e.show);
+  if (edu.length) {
+    h += '<h2>Education</h2>';
+    edu.forEach(e => h += `<div class="cv-entry"><h3>${e.degree}</h3>
+      <p class="cv-meta">${e.institution} · ${e.location} · ${e.start}–${e.end}${e.gpa?' · GPA: '+e.gpa:''}</p></div>`);
+  }
+
+  const skills = d.skills.filter(s=>s.show);
+  if (skills.length) {
+    h += '<h2>Skills</h2>';
+    skills.forEach(s => h += `<div class="cv-entry"><h3>${s.category}</h3><p>${s.items.join(', ')}</p></div>`);
+  }
+
+  const courses = d.courses.filter(c=>c.show);
+  if (courses.length) {
+    h += '<h2>Relevant Coursework</h2><ul>';
+    courses.forEach(c => h += `<li>${c.name}${c.grade?' — '+c.grade:''}</li>`);
+    h += '</ul>';
+  }
+
+  const certs = d.certifications.filter(c=>c.show);
+  if (certs.length) {
+    h += '<h2>Certifications & Memberships</h2>';
+    certs.forEach(c => h += `<div class="cv-entry"><h3>${c.name}</h3>
+      <p class="cv-meta">${c.issuer} · ${c.year}</p></div>`);
+  }
+
+  const langs = d.languages.filter(l=>l.show);
+  if (langs.length) {
+    h += '<h2>Languages</h2><ul>';
+    langs.forEach(l => h += `<li>${l.lang} — ${l.level}</li>`);
+    h += '</ul>';
+  }
+
+  const interests = d.interests.filter(i=>i.show);
+  if (interests.length) {
+    h += '<h2>Interests</h2><ul>';
+    interests.forEach(i => h += `<li>${i.name}</li>`);
+    h += '</ul>';
+  }
+
+  return h;
+}
+
+async function renderCV() {
+  if (!cvData) await loadCV();
+  document.getElementById('cv-output').innerHTML = printCVHTML(cvData);
+}
+
+async function downloadPDF() {
+  if (!cvData) await loadCV();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
+  const d = cvData, p = d.personal;
+  let y = 20;
+  const lm = 20, rm = 190;
+
+  const line = (txt, size=10, bold=false, rgb=[226,232,240]) => {
+    doc.setFontSize(size); doc.setFont('helvetica', bold?'bold':'normal'); doc.setTextColor(...rgb);
+    doc.splitTextToSize(txt, rm-lm).forEach(l => {
+      if (y > 275) { doc.addPage(); y = 20; }
+      doc.text(l, lm, y); y += size * 0.42 + 1.5;
+    }); y += 1;
+  };
+  const section = (title) => {
+    y += 2;
+    doc.setFillColor(124,58,237);
+    doc.rect(lm, y-4, rm-lm, 7, 'F');
+    doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+    doc.text(title, lm+2, y); y += 8;
+  };
+
+  doc.setFillColor(10,14,26);
+  doc.rect(0,0,210,297,'F');
+
+  line(p.name, 22, true, [124,58,237]);
+  line(p.title, 12, false, [6,182,212]);
+  line([p.email, p.location, p.github].filter(Boolean).join('  ·  '), 9, false, [148,163,184]);
+  line(p.summary, 10, false, [226,232,240]);
+  y += 2;
+
+  section('EDUCATION');
+  d.education.filter(e=>e.show).forEach(e => {
+    line(e.degree, 10, true);
+    line(`${e.institution} · ${e.start}–${e.end}${e.gpa?' · GPA '+e.gpa:''}`, 9, false, [148,163,184]);
+  });
+
+  section('SKILLS');
+  d.skills.filter(s=>s.show).forEach(s => line(`${s.category}: ${s.items.join(', ')}`));
+
+  section('RELEVANT COURSEWORK');
+  d.courses.filter(c=>c.show).forEach(c => line(`${c.name}${c.grade?' — '+c.grade:''}`));
+
+  section('CERTIFICATIONS & MEMBERSHIPS');
+  d.certifications.filter(c=>c.show).forEach(c => {
+    line(c.name, 10, true); line(`${c.issuer} · ${c.year}`, 9, false, [148,163,184]);
+  });
+
+  section('LANGUAGES');
+  d.languages.filter(l=>l.show).forEach(l => line(`${l.lang}: ${l.level}`));
+
+  section('INTERESTS');
+  line(d.interests.filter(i=>i.show).map(i=>i.name).join('  ·  '), 9);
+
+  doc.save('cv_raul_vivaldi.pdf');
+}
+
+// ── Init ─────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  // URL param for calculator
+  const params = new URLSearchParams(window.location.search);
+  const expr = params.get('expr');
+  if (expr) {
+    document.getElementById('calc-expr').value = decodeURIComponent(expr);
+    document.getElementById('sb6').classList.add('open');
+    runCalc();
+    document.getElementById('card6')?.scrollIntoView({behavior:'smooth'});
+  }
+  renderCV();
+});
+</script>
+</body>
+</html>

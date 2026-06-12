@@ -1,0 +1,50 @@
+{
+  "personal": {
+    "name": "Raul Antonio Vivaldi Santana",
+    "title": "Computer Science Student",
+    "email": "Raulvivaldi2005@gmail.com",
+    "phone": "",
+    "location": "Yauco, Puerto Rico",
+    "linkedin": "",
+    "github": "github.com/raul15antonio",
+    "summary": "Estudiante apasionado por la programación, los sistemas distribuidos y el desarrollo web.",
+    "show": true
+  },
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "institution": "University of Puerto Rico, Mayagüez (UPRM)",
+      "location": "Mayagüez, PR",
+      "start": "2023",
+      "end": "2027",
+      "gpa": "3.00",
+      "show": true
+    }
+  ],
+  "experience": [],
+  "skills": [
+    { "category": "Languages", "items": ["Python", "JavaScript", "C++"], "show": true },
+    { "category": "Tools", "items": ["Git", "GitHub", "Linux", "VS Code"], "show": true },
+    { "category": "Paradigms", "items": ["Imperative", "Functional", "Logic", "OOP"], "show": true }
+  ],
+  "projects": [],
+  "courses": [
+    { "name": "Data Structures", "grade": "", "show": true },
+    { "name": "Algorithms", "grade": "", "show": true },
+    { "name": "Operating Systems", "grade": "", "show": true }
+  ],
+  "languages": [
+    { "lang": "Spanish", "level": "Native", "show": true },
+    { "lang": "English", "level": "Advanced", "show": true }
+  ],
+  "certifications": [
+    { "name": "NSLS Member", "issuer": "National Society of Leadership and Success", "year": "2025", "show": true },
+    { "name": "NHS Member", "issuer": "National Honor Society", "year": "2022", "show": true }
+  ],
+  "awards": [],
+  "interests": [
+    { "name": "Drawing", "show": true },
+    { "name": "Gaming", "show": true },
+    { "name": "Music", "show": true }
+  ]
+}
